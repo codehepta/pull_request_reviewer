@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Review Pull Request{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s12">
+        <div class="card">
+            <div class="card-content">
+                <div class="pr-header">
+                    <span class="card-title">{{ pr.title }}</span>
+                    <div class="pr-description">
+                        {{ pr.description | replace("\n", "<br>") | safe }}
+                    </div>
+                    <div class="pr-meta">
+                        <div class="chip">
+                            <img src="{{ pr.createdBy.imageUrl }}" alt="{{ pr.createdBy.displayName }}">
+                            {{ pr.createdBy.displayName }}
+                        </div>
+                        <div class="chip">
+                            <i class="material-icons">folder</i>
+                            {{ pr.repository.name }}
+                        </div>
+                        <div class="chip">
+                            <i class="material-icons">merge_type</i>
+                            {{ pr.sourceRefName | replace("refs/heads/", "") }} → {{ pr.targetRefName | replace("refs/heads/", "") }}
+                        </div>
+                        <div class="chip {{ 'green white-text' if pr.mergeStatus == 'succeeded' }}">
+                            <i class="material-icons">{{ 'check_circle' if pr.mergeStatus == 'succeeded' else 'pending' }}</i>
+                            Merge status: {{ pr.mergeStatus }}
+                        </div>
+                        <div class="chip">
+                            <i class="material-icons">update</i>
+                            Created: {{ pr.creationDate | replace("T", " ") | replace("Z", "") }}
+                        </div>
+                    </div>
+                    <div class="pr-reviewers">
+                        <h6>Reviewers:</h6>
+                        {% for reviewer in pr.reviewers %}
+                        <div class="chip reviewer-chip {{ 'green white-text' if reviewer.vote > 0 }} {{ 'red white-text' if reviewer.vote < 0 }}">
+                            <img src="{{ reviewer.imageUrl }}" alt="{{ reviewer.displayName }}">
+                            {{ reviewer.displayName }}
+                            {% if reviewer.vote > 0 %}
+                                <i class="material-icons tiny">thumb_up</i>
+                            {% elif reviewer.vote < 0 %}
+                                <i class="material-icons tiny">thumb_down</i>
+                            {% endif %}
+                            {% if reviewer.isRequired %}
+                                <i class="material-icons tiny" title="Required Reviewer">star</i>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col s12">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Code Changes</span>
+                <div class="diff-container z-depth-1">
+                    {% if diff_message %}
+                        {% for file_diff in diff_message %}
+                        <div class="file-diff">
+                            <div class="file-header collapsible-header" onclick="toggleDiff(this)">
+                                <div class="file-info">
+                                    <i class="material-icons tiny">description</i>
+                                    <span class="file-path">{{ file_diff.file_path }}</span>
+                                    <span class="file-stats">
+                                        {% set additions = file_diff.lines|selectattr('type', 'eq', 'diff-addition')|list|length %}
+                                        {% set deletions = file_diff.lines|selectattr('type', 'eq', 'diff-deletion')|list|length %}
+                                        {% if additions %}
+                                            <span class="addition-count">+{{ additions }}</span>
+                                        {% endif %}
+                                        {% if deletions %}
+                                            <span class="deletion-count">-{{ deletions }}</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <i class="material-icons collapse-icon">expand_more</i>
+                            </div>
+                            <div class="diff-content collapsible-body">
+                                {% if file_diff.lines %}
+                                    {% for line in file_diff.lines %}
+                                    <div class="diff-line {{ line.type }}">
+                                        <div class="diff-line-number">{{ line.old_number }}</div>
+                                        <div class="diff-line-number">{{ line.new_number }}</div>
+                                        <div class="diff-line-content">
+                                            <span class="diff-marker">{{ line.marker }}</span>
+                                            <code class="language-{{ file_diff.language }}">{{ line.content }}</code>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="diff-line">
+                                        <div class="diff-line-content">
+                                            <em>No changes in this file</em>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="diff-message">No changes found in this pull request.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col s12">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Code Review</span>
+                
+                <form method="post" class="ai-review-form">
+                    <div class="row">
+                        <div class="col s8">
+                            <button class="btn waves-effect waves-light blue" type="submit" name="get_ai_review">
+                                Generate AI Review
+                                <i class="material-icons right">auto_fix_high</i>
+                            </button>
+                        </div>
+                        <div class="col s4">
+                            <div class="input-field">
+                                <select name="review_language" id="review_language">
+                                    <option value="en" selected>English</option>
+                                    <option value="tr">Turkish</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="de">German</option>
+                                    <option value="fr">French</option>
+                                </select>
+                                <label>Review Language</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="review-content">
+                    <form action="{{ url_for('manual_comment', repository_id=pr.repository.id, pr_id=pr.pullRequestId) }}" 
+                          method="post" class="comment-form">
+                        <div class="input-field">
+                            <textarea id="manual_comment" name="manual_comment" class="materialize-textarea">{% if review %}{{ review }}{% endif %}</textarea>
+                            <label for="manual_comment">Your Comment</label>
+                        </div>
+                        <button class="btn waves-effect waves-light" type="submit">
+                            Send Manual Comment
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </form>
+                </div>
+
+                {% if review %}
+                <div class="review-actions">
+                    <form action="{{ url_for('send_review', repository_id=pr.repository.id, pr_id=pr.pullRequestId) }}" 
+                          method="post" class="inline-form">
+                        <input type="hidden" name="review" value="{{ review }}">
+                        <button class="btn waves-effect waves-light blue" type="submit">
+                            Send Review to PR
+                            <i class="material-icons right">check_circle</i>
+                        </button>
+                    </form>
+
+                    <div class="decision-buttons">
+                        <form action="{{ url_for('approve_pull_request', repository_id=pr.repository.id, pr_id=pr.pullRequestId) }}" 
+                              method="post" class="inline-form">
+                            <button class="btn waves-effect waves-light green" type="submit">
+                                Approve
+                                <i class="material-icons right">thumb_up</i>
+                            </button>
+                        </form>
+                        <form action="{{ url_for('reject_pull_request', repository_id=pr.repository.id, pr_id=pr.pullRequestId) }}" 
+                              method="post" class="inline-form">
+                            <button class="btn waves-effect waves-light red" type="submit">
+                                Reject
+                                <i class="material-icons right">thumb_down</i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Materialize components
+    M.AutoInit();
+    
+    // Initialize syntax highlighting
+    document.querySelectorAll('code').forEach((block) => {
+        hljs.highlightElement(block);
+    });
+    
+    // Auto-resize textareas
+    var textareas = document.querySelectorAll('.materialize-textarea');
+    textareas.forEach((textarea) => {
+        M.textareaAutoResize(textarea);
+    });
+
+    // Initialize all diffs as collapsed
+    document.querySelectorAll('.diff-content').forEach(content => {
+        content.style.display = 'none';
+    });
+});
+
+function toggleDiff(header) {
+    const diffContent = header.nextElementSibling;
+    const icon = header.querySelector('.collapse-icon');
+    
+    if (diffContent.style.display === 'none' || !diffContent.style.display) {
+        diffContent.style.display = 'block';
+        icon.textContent = 'expand_less';
+        header.classList.add('expanded');
+    } else {
+        diffContent.style.display = 'none';
+        icon.textContent = 'expand_more';
+        header.classList.remove('expanded');
+    }
+}
+</script>
+{% endblock %}

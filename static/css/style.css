@@ -1,0 +1,367 @@
+/* Core layout */
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: #f5f7fb;
+}
+
+main {
+    flex: 1 0 auto;
+    padding: 2rem 0;
+}
+
+/* Cards and containers */
+.card {
+    border-radius: 8px;
+}
+
+.card .card-content {
+    padding: 24px;
+}
+
+/* Card enhancements */
+.card .card-content .card-title {
+    margin-bottom: 20px;
+}
+
+/* Code display */
+.diff-container {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 0; /* Remove padding from container */
+    margin: 1rem 0;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.3;
+    overflow-x: auto;
+    margin-bottom: 16px;
+}
+
+pre.code-diff {
+    font-family: 'Roboto Mono', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    white-space: pre;
+    tab-size: 2;
+}
+
+/* Review actions */
+.review-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.decision-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Collection styles */
+.collection .collection-item.avatar {
+    min-height: 84px;
+    padding-left: 72px;
+    position: relative;
+}
+
+.collection .collection-item.avatar .title {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.87);
+    line-height: 1.5;
+    margin-bottom: 4px;
+}
+
+.collection .collection-item.avatar p {
+    color: rgba(0,0,0,0.54);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.collection .collection-item.avatar .secondary-content {
+    top: 16px;
+}
+
+/* Badge customization */
+.badge {
+    float: none;
+    margin-left: 8px;
+}
+
+/* Helper classes */
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mt-2 {
+    margin-top: 16px !important;
+}
+
+/* Status colors */
+.status-active {
+    color: #2196F3;
+}
+
+.status-completed {
+    color: #4CAF50;
+}
+
+.status-abandoned {
+    color: #9E9E9E;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .review-actions, .decision-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Git Diff Styling */
+.diff-header {
+    background-color: #f6f8fa;
+    border-bottom: 1px solid #e1e4e8;
+    padding: 8px 16px;
+    color: #24292e;
+    font-weight: 600;
+}
+
+.diff-content {
+    padding: 0;
+    margin: 0;
+    overflow-x: auto;
+    transition: all 0.3s ease;
+}
+
+.diff-line {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    white-space: pre;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 12px;
+    line-height: 16px; /* Reduced line height */
+    min-height: 16px; /* Match line height */
+}
+
+.diff-line-number {
+    text-align: right;
+    padding: 0 4px; /* Reduced padding */
+    min-width: 40px;
+    color: rgba(27,31,35,.3);
+    background-color: #fafbfc;
+    border-right: 1px solid #e1e4e8;
+    user-select: none;
+}
+
+.diff-line-content {
+    padding: 0 4px; /* Reduced padding */
+    white-space: pre;
+    flex: 1;
+    display: flex;
+    align-items: center; /* Vertically center content */
+}
+
+.diff-addition {
+    background-color: #e6ffec;
+}
+
+.diff-addition .diff-line-number {
+    background-color: #cdffd8;
+    border-color: #bef5cb;
+}
+
+.diff-deletion {
+    background-color: #ffebe9;
+}
+
+.diff-deletion .diff-line-number {
+    background-color: #ffd7d5;
+    border-color: #ffc9c7;
+}
+
+.diff-info {
+    color: #0366d6;
+}
+
+/* Code block improvements */
+.hljs {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* File header styling */
+.file-header {
+    padding: 6px 10px; /* Reduced padding */
+    min-height: 32px; /* Reduced height */
+    background-color: #f6f8fa;
+    border-bottom: 1px solid #e1e4e8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.file-header:hover {
+    background-color: #f0f3f6;
+}
+
+.file-header.expanded {
+    background-color: #f0f3f6;
+    border-bottom: 1px solid #d1d5da;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.file-path {
+    color: #24292e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 13px; /* Reduced from 14px */
+}
+
+.file-stats {
+    margin-left: 8px; /* Reduced from 12px */
+    font-size: 11px; /* Reduced from 12px */
+}
+
+.addition-count {
+    color: #28a745;
+    margin-right: 8px;
+}
+
+.deletion-count {
+    color: #d73a49;
+}
+
+.collapse-icon {
+    color: #586069;
+    transition: transform 0.2s;
+}
+
+.expanded .collapse-icon {
+    transform: rotate(180deg);
+}
+
+/* Debug styles */
+.diff-message {
+    padding: 16px;
+    color: #666;
+    font-style: italic;
+}
+
+.file-diff {
+    margin-bottom: 4px; /* Reduced margin */
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.diff-marker {
+    color: rgba(27,31,35,.3);
+    width: 8px;
+    display: inline-block;
+    margin-right: 2px; /* Reduced margin */
+}
+
+/* Make sure code is visible */
+.diff-line code {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    display: inline;
+    white-space: pre;
+    line-height: 16px; /* Match parent line height */
+    font-size: 12px;
+}
+
+/* PR styles */
+.pr-header {
+    margin-bottom: 24px;
+}
+
+.pr-description {
+    margin: 16px 0;
+    padding: 16px;
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.pr-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.pr-reviewers {
+    margin-top: 16px;
+    border-top: 1px solid #e1e4e8;
+    padding-top: 16px;
+}
+
+.pr-reviewers h6 {
+    margin-bottom: 8px;
+    color: #586069;
+}
+
+.reviewer-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reviewer-chip img {
+    margin: 0 4px 0 -8px;
+}
+
+.reviewer-chip .material-icons.tiny {
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    margin: 0;
+    gap: 6px;
+}
+
+.chip img {
+    float: none;
+    margin: 0;
+    height: 24px;
+    width: 24px;
+}
+
+.chip i.material-icons {
+    float: none;
+    margin: 0;
+}

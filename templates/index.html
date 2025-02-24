@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}PR Reviewer - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col s12 m8 offset-m2">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Connect to Azure DevOps</span>
+                <form action="{{ url_for('list_pull_requests') }}" method="post" class="form">
+                    <div class="input-field">
+                        <input type="password" id="pat" name="pat" required>
+                        <label for="pat">Azure DevOps PAT</label>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="text" id="org_url" name="org_url" required>
+                        <label for="org_url">Organization URL</label>
+                        <span class="helper-text">e.g., https://dev.azure.com/your-org</span>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="text" id="project" name="project" required>
+                        <label for="project">Project Name</label>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="text" id="repository" name="repository">
+                        <label for="repository">Repository Name (Optional)</label>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="password" id="openai_key" name="openai_key" required>
+                        <label for="openai_key">OpenAI API Key</label>
+                    </div>
+
+                    <button class="btn waves-effect waves-light blue" type="submit">
+                        Get Pull Requests
+                        <i class="material-icons right">send</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
