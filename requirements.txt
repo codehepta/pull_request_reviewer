@@ -2,3 +2,4 @@ flask
 requests
 openai
 python-dotenv
+gunicorn

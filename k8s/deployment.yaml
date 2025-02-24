@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pr-reviewer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pr-reviewer
+  template:
+    metadata:
+      labels:
+        app: pr-reviewer
+    spec:
+      containers:
+      - name: pr-reviewer
+        image: pr-reviewer:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: pr-reviewer-config
+        - secretRef:
+            name: pr-reviewer-secrets
