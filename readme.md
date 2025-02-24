@@ -15,7 +15,8 @@ An AI-powered tool that helps streamline the code review process in Azure DevOps
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.8+ (for local installation)
+- Docker (for containerized deployment)
 - Azure DevOps account with PAT (Personal Access Token)
 - OpenAI API key
 - Access to Azure DevOps repositories
@@ -27,18 +28,15 @@ An AI-powered tool that helps streamline the code review process in Azure DevOps
 git clone https://github.com/codehepta/pull_request_reviewer.git
 cd pull_request_reviewer
 ```
-
 2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
-
 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
 4. Create a `.env` file in the project root:
 ```env
 AZURE_DEVOPS_PAT="your_azure_devops_pat"
@@ -48,42 +46,47 @@ OPENAI_API_KEY="your_openai_api_key"
 OPENAI_MODEL="gpt-4"  # or any other OpenAI model
 ```
 
+## Docker Deployment
+
+As an alternative to local installation, you can use Docker:
+
+1. Build the Docker image:
+```bash
+docker build -t pull-request-reviewer .
+```
+
+2. Run the container:
+```bash
+docker run -p 5000:5000 \
+  -e AZURE_DEVOPS_PAT="your_azure_devops_pat" \
+  -e AZURE_DEVOPS_ORG="your_organization_url" \
+  -e AZURE_DEVOPS_PROJECT="your_project_name" \
+  -e OPENAI_API_KEY="your_openai_api_key" \
+  -e OPENAI_MODEL="gpt-4" \
+  pull-request-reviewer
+```
+
+The application will be available at `http://localhost:5000`
+
 ## Configuration
-
-### Azure DevOps PAT
-1. Go to Azure DevOps
-2. Click on User Settings > Personal Access Tokens
-3. Create a new token with the following permissions:
-   - Code: Read & Write
-   - Pull Request Threads: Read & Write
-
-### OpenAI API Key
-1. Visit OpenAI's website
-2. Create an account or log in
-3. Go to API settings
-4. Generate a new API key
-
-## Usage
 
 1. Set the Flask environment variables:
 ```bash
 export FLASK_APP=app.py
 export FLASK_ENV=development  # for development mode
 ```
-
 2. Start the Flask application:
 ```bash
 flask run
 ```
-
 3. Open your browser and navigate to `http://127.0.0.1:5000`
 
 4. On the home page, enter your credentials:
-   - Azure DevOps PAT
+   - Azure DevOps PAT   
+   - OpenAI API Key
    - Organization URL
    - Project Name
    - Repository Name (optional)
-   - OpenAI API Key
 
 5. Click "Get Pull Requests" to view your assigned PRs
 
@@ -104,9 +107,9 @@ flask run
 
 ### Code Diff View
 - Syntax highlighting for multiple languages
+- Clear indication of additions and deletions
 - Collapsible file sections
 - Line numbers for both old and new versions
-- Clear indication of additions and deletions
 
 ### Review Management
 - AI-generated reviews in multiple languages
